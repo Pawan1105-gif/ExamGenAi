@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-background: oklch(0.985 0.01 260);
+  --color-foreground: oklch(0.18 0.04 260);
+  --color-muted: oklch(0.55 0.03 260);
+  --color-card: oklch(1 0.01 260 / 0.55);
+  --color-card-border: oklch(0.9 0.02 260 / 0.6);
+  --color-primary: oklch(0.58 0.2 265);
+  --color-primary-foreground: oklch(0.99 0.01 260);
+  --color-accent: oklch(0.72 0.16 200);
+  --color-glow: oklch(0.62 0.22 265 / 0.35);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+    --color-background: oklch(0.14 0.04 265);
+    --color-foreground: oklch(0.96 0.02 260);
+    --color-muted: oklch(0.68 0.03 260);
+    --color-card: oklch(0.2 0.04 265 / 0.55);
+    --color-card-border: oklch(0.35 0.05 265 / 0.5);
+    --color-primary: oklch(0.72 0.18 265);
+    --color-primary-foreground: oklch(0.14 0.04 265);
+    --color-accent: oklch(0.78 0.12 200);
+    --color-glow: oklch(0.55 0.22 265 / 0.45);
+  }
+
+  body {
+    @apply min-h-screen font-sans antialiased;
+    background: var(--color-background);
+    color: var(--color-foreground);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+      radial-gradient(1200px circle at 10% 10%, var(--color-glow), transparent 45%),
+      radial-gradient(900px circle at 90% 20%, oklch(0.7 0.15 200 / 0.2), transparent 40%),
+      radial-gradient(800px circle at 50% 100%, oklch(0.55 0.2 300 / 0.15), transparent 45%);
+    pointer-events: none;
+  }
+
+  html.dark body::before {
+    background:
+      radial-gradient(1000px circle at 15% 0%, oklch(0.45 0.2 265 / 0.35), transparent 50%),
+      radial-gradient(800px circle at 85% 15%, oklch(0.4 0.12 200 / 0.25), transparent 45%),
+      radial-gradient(700px circle at 40% 90%, oklch(0.35 0.15 300 / 0.2), transparent 50%);
+  }
+}
+
+@utility glass-panel {
+  background: var(--color-card);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--color-card-border);
+  box-shadow:
+    0 4px 24px oklch(0 0 0 / 0.06),
+    inset 0 1px 0 oklch(1 0 0 / 0.12);
+}
+
+@utility neo-surface {
+  background: linear-gradient(145deg, oklch(1 0 0 / 0.08), oklch(0 0 0 / 0.04));
+  box-shadow:
+    8px 8px 20px oklch(0 0 0 / 0.12),
+    -6px -6px 16px oklch(1 0 0 / 0.06);
+  border-radius: 1rem;
+}
+
+html.dark .neo-surface {
+  background: linear-gradient(145deg, oklch(1 0 0 / 0.06), oklch(0 0 0 / 0.25));
+  box-shadow:
+    8px 8px 24px oklch(0 0 0 / 0.45),
+    -4px -4px 12px oklch(1 0 0 / 0.04);
+}
