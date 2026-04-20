@@ -52,9 +52,19 @@ export function errorHandler(
     return res.status(400).json({ success: false, error: err.message });
   }
 
-  console.error(err);
-  return res.status(500).json({
+  console.error("Unhandled error:", err);
+  
+  // Include error details in development mode
+  const isDev = process.env.NODE_ENV !== "production";
+  const errorResponse: any = {
     success: false,
     error: "Internal server error",
-  });
+  };
+  
+  if (isDev && err instanceof Error) {
+    errorResponse.message = err.message;
+    errorResponse.stack = err.stack;
+  }
+  
+  return res.status(500).json(errorResponse);
 }

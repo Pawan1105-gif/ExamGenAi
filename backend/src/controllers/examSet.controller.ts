@@ -7,6 +7,7 @@ import {
 } from "../dtos/examSet.dto.js";
 import { extractTextFromNoteFile } from "../services/noteExtract.service.js";
 import { examSetService } from "../services/examSet.service.js";
+import { renderExamSetPdf, renderExamSetQuestionsPdf } from "../services/pdf.service.js";
 
 export const examSetController = {
   async generate(req: Request, res: Response, next: NextFunction) {
@@ -89,6 +90,34 @@ export const examSetController = {
       const id = String(req.params.id);
       await examSetService.remove(req.user.sub, req.user.role, id);
       res.status(204).send();
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  async downloadPdf(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) throw new Error("Unauthorized");
+      const id = String(req.params.id);
+      const row = await examSetService.getById(req.user.sub, req.user.role, id);
+      const { filename, buffer } = await renderExamSetPdf(row);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+      res.send(buffer);
+    } catch (e) {
+      next(e);
+    }
+  },
+
+  async downloadQuestionsPdf(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) throw new Error("Unauthorized");
+      const id = String(req.params.id);
+      const row = await examSetService.getById(req.user.sub, req.user.role, id);
+      const { filename, buffer } = await renderExamSetQuestionsPdf(row);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+      res.send(buffer);
     } catch (e) {
       next(e);
     }

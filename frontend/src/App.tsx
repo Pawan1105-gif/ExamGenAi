@@ -14,6 +14,11 @@ import { Login } from "@/pages/Login";
 import { NotFound } from "@/pages/NotFound";
 import { Profile } from "@/pages/Profile";
 import { Register } from "@/pages/Register";
+import { QuizManagement } from "@/pages/QuizManagement";
+import { CreateQuiz } from "@/pages/CreateQuiz";
+import { JoinQuiz } from "@/pages/JoinQuiz";
+import { QuizAttempt } from "@/pages/QuizAttempt";
+import { QuizResults } from "@/pages/QuizResults";
 
 export default function App() {
   return (
@@ -40,6 +45,32 @@ export default function App() {
               <Route path="exams" element={<ExamsList />} />
               <Route path="exams/:id" element={<ExamDetail />} />
               <Route path="profile" element={<Profile />} />
+              <Route
+                path="quiz"
+                element={
+                  <ProtectedRoute adminOnly>
+                    <QuizManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="quiz/create"
+                element={
+                  <ProtectedRoute adminOnly>
+                    <CreateQuiz />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="quiz/join" element={<JoinQuiz />} />
+              <Route path="quiz/attempt/:id" element={<QuizAttempt />} />
+              <Route
+                path="quiz/:id/results"
+                element={
+                  <ProtectedRoute adminOnly>
+                    <QuizResults />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="admin"
                 element={

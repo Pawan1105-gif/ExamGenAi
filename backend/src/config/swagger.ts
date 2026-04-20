@@ -208,6 +208,19 @@ definition.paths = {
       responses: { "200": { description: "OK" } },
     },
   },
+  "/api/admin/exam-sets/{id}/pdf": {
+    get: {
+      tags: ["Admin"],
+      summary: "Download an exam set as PDF (admin)",
+      parameters: [
+        { name: "id", in: "path", required: true, schema: { type: "string" } },
+      ],
+      responses: {
+        "200": { description: "PDF file" },
+        "404": { description: "Not found" },
+      },
+    },
+  },
 };
 
 const options: swaggerJsdoc.Options = {

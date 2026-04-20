@@ -16,3 +16,5 @@ examSetRouter.get("/", examSetController.list);
 examSetRouter.get("/:id", examSetController.getOne);
 examSetRouter.patch("/:id", examSetController.update);
 examSetRouter.delete("/:id", examSetController.remove);
+examSetRouter.get("/:id/download", examSetController.downloadPdf);
+examSetRouter.get("/:id/download/questions", examSetController.downloadQuestionsPdf);

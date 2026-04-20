@@ -23,6 +23,8 @@ model User {
   updatedAt    DateTime @updatedAt @map("updated_at")
 
   examSets ExamSet[]
+  quizzes Quiz[]
+  quizAttempts QuizAttempt[]
 
   @@map("users")
 }
@@ -40,8 +42,49 @@ model ExamSet {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizzes Quiz[]
 
   @@index([userId])
   @@index([createdAt])
   @@map("exam_sets")
+}
+
+model Quiz {
+  id                String   @id @default(uuid())
+  title             String
+  description       String?
+  adminId           String   @map("admin_id")
+  examSetId         String   @map("exam_set_id")
+  selectedQuestions Json     @map("selected_questions") // array of question indices
+  marksPerQuestion  Int      @map("marks_per_question")
+  timeLimit         Int?     @map("time_limit") // in minutes
+  uniqueCode        String   @unique @map("unique_code")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  admin User @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  examSet ExamSet @relation(fields: [examSetId], references: [id], onDelete: Cascade)
+  attempts QuizAttempt[]
+
+  @@index([adminId])
+  @@index([examSetId])
+  @@index([uniqueCode])
+  @@map("quizzes")
+}
+
+model QuizAttempt {
+  id         String   @id @default(uuid())
+  quizId     String   @map("quiz_id")
+  userId     String   @map("user_id")
+  answers    Json     // array of {questionIndex, selectedAnswer}
+  score      Int
+  submittedAt DateTime @default(now()) @map("submitted_at")
+  timeTaken  Int?     @map("time_taken") // in seconds
+
+  quiz Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([quizId])
+  @@index([userId])
+  @@unique([quizId, userId])
+  @@map("quiz_attempts")
 }

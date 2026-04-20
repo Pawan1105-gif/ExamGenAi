@@ -6,3 +6,4 @@ export const adminRouter = Router();
 
 adminRouter.use(requireAuth, requireRole("ADMIN"));
 adminRouter.get("/exam-sets", adminController.listExamSets);
+adminRouter.get("/exam-sets/:id/pdf", adminController.downloadExamPdf);

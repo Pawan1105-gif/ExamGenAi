@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Download, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { apiFetch } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
@@ -16,13 +16,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function ExamDetail() {
   const { id } = useParams();
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const navigate = useNavigate();
   const [exam, setExam] = useState<ExamSet | null>(null);
   const [loading, setLoading] = useState(true);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [saving, setSaving] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     if (!token || !id) return;
@@ -77,6 +78,62 @@ export function ExamDetail() {
     }
   }
 
+  async function downloadPdf() {
+    if (!token || !id) return;
+    setDownloading(true);
+    try {
+      const res = await fetch(`/api/exam-sets/${id}/download`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || `Download failed (${res.status})`);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${(exam?.title || "exam").replace(/[^\w\- ]+/g, "")}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast.success("PDF downloaded");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Download failed");
+    } finally {
+      setDownloading(false);
+    }
+  }
+
+  async function downloadQuestionsPdf() {
+    if (!token || !id) return;
+    setDownloading(true);
+    try {
+      const res = await fetch(`/api/exam-sets/${id}/download/questions`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || `Download failed (${res.status})`);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${(exam?.title || "exam").replace(/[^\w\- ]+/g, "")}-questions.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast.success("Questions PDF downloaded");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Download failed");
+    } finally {
+      setDownloading(false);
+    }
+  }
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -122,10 +179,30 @@ export function ExamDetail() {
             <Save className="h-4 w-4" />
             {saving ? "Saving…" : "Save"}
           </Button>
-          <Button type="button" variant="danger" onClick={remove}>
-            <Trash2 className="h-4 w-4" />
-            Delete
+          <Button
+            type="button"
+            variant="outline"
+            onClick={downloadPdf}
+            disabled={downloading}
+          >
+            <Download className="h-4 w-4" />
+            {downloading ? "Preparing…" : "Download Full PDF"}
           </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={downloadQuestionsPdf}
+            disabled={downloading}
+          >
+            <Download className="h-4 w-4" />
+            {downloading ? "Preparing…" : "Download Questions PDF"}
+          </Button>
+          {user?.role === "ADMIN" && (
+            <Button type="button" variant="danger" onClick={remove}>
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </Button>
+          )}
         </div>
       </Card>
 

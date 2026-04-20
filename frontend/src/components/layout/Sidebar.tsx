@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   BookOpen,
+  ClipboardList,
   Home,
   LayoutDashboard,
   LogOut,
@@ -19,6 +20,7 @@ const links = [
   { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/app/generator", label: "AI Generator", icon: Sparkles },
   { to: "/app/exams", label: "My Exams", icon: BookOpen },
+  { to: "/app/quiz/join", label: "Join Quiz", icon: ClipboardList },
   { to: "/app/profile", label: "Profile", icon: UserCircle },
 ];
 
@@ -61,20 +63,36 @@ export function Sidebar() {
           </NavLink>
         ))}
         {user?.role === "ADMIN" && (
-          <NavLink
-            to="/app/admin"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-amber-500/20 text-amber-200"
-                  : "text-[var(--color-muted)] hover:bg-[var(--color-card)]"
-              )
-            }
-          >
-            <Home className="h-4 w-4 shrink-0" />
-            Admin
-          </NavLink>
+          <>
+            <NavLink
+              to="/app/quiz"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-purple-500/20 text-purple-200"
+                    : "text-[var(--color-muted)] hover:bg-[var(--color-card)]"
+                )
+              }
+            >
+              <ClipboardList className="h-4 w-4 shrink-0" />
+              Manage Quizzes
+            </NavLink>
+            <NavLink
+              to="/app/admin"
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-amber-500/20 text-amber-200"
+                    : "text-[var(--color-muted)] hover:bg-[var(--color-card)]"
+                )
+              }
+            >
+              <Home className="h-4 w-4 shrink-0" />
+              Admin
+            </NavLink>
+          </>
         )}
       </nav>
 

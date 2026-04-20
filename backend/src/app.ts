@@ -11,6 +11,7 @@ import { adminRouter } from "./routes/admin.routes.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { dashboardRouter } from "./routes/dashboard.routes.js";
 import { examSetRouter } from "./routes/examSet.routes.js";
+import { quizRouter } from "./routes/quiz.routes.js";
 import { userRouter } from "./routes/user.routes.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -40,6 +41,7 @@ export function createApp() {
   app.use("/api/auth", authRouter);
   app.use("/api/dashboard", dashboardRouter);
   app.use("/api/exam-sets", examSetRouter);
+  app.use("/api/quizzes", quizRouter);
   app.use("/api/users", userRouter);
   app.use("/api/admin", adminRouter);
 
